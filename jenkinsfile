@@ -1,0 +1,37 @@
+
+pipeline {
+    agent any
+    tools{
+        maven 'M2_HOME'
+        jdk 'JAVA_HOME'
+     }
+ 
+    stages {
+ 
+        stage('stage 1 - Fetch code'){
+            steps{
+                git branch: 'main' , url:'https://github.com/gad0788/geo_mvn.git'
+            }
+        }
+ 
+        stage('stage 2 - Build'){
+            steps{
+                sh 'mvn install -DskipTests'
+            }
+            post{
+                success{
+                    echo 'Archiving your artifacts'
+                    archiveArtifacts artifacts: '**/*.jar'
+                }
+            }
+        }
+ 
+        stage('stage 3 - Unit test'){
+            steps{
+                sh 'mvn test'
+            }
+        }
+       
+ 
+    }
+}
